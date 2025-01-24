@@ -1,0 +1,35 @@
+name: Playwright Tests (MSTest C#)
+
+on:
+  push:
+    branches:
+      - main
+    pull_request:
+      branches:
+        - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build the project
+        run: dotnet build --configuration Release
+
+      - name: Install Playwright Browsers
+        run: pwsh bin/Release/net8.0/playwright.ps1 install
+
+      - name: Run Playwright tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
